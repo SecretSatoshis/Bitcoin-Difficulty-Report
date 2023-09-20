@@ -1,0 +1,11 @@
+ yahoo_fin
+ datapane
+ pyarrow==10.0.0
+ langchain
+ unstructured
+ openai
+ chromadb
+ tiktoken
+ seaborn
+ seaborn matplotlib
+ Pillow
