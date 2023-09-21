@@ -57,7 +57,7 @@ The project follows a structured workflow orchestrated through the `main.py` scr
 ## Output Overview
 The script generates two main types of outputs:
 1. **HTML Report**: A detailed report in HTML format, which includes various analyses and visual representations of the data.
-You can download the report from 'Difficulty_Report.html' or vist the [Report Link] (https://secretsatoshis.github.io/Bitcoin-Difficulty-Report/Difficulty_Report.html)
+You can download the report from 'Difficulty_Report.html' or vist the [Report Link](https://secretsatoshis.github.io/Bitcoin-Difficulty-Report/Difficulty_Report.html)
 2. **CSV Files**: Data files in CSV format that store the report datasets.
 
 The project is set up with a GitHub workflow that automatically updates the data and regenerates the report on a daily basis.
