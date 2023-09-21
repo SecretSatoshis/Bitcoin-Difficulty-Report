@@ -2,7 +2,7 @@ name: Update Difficulty Report
 
 on:
   schedule:
-    - cron:  '10 16 * * *''
+    - cron:  '10 16 * * *'
 
 jobs:
   build:
