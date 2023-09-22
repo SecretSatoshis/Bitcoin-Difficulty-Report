@@ -7,5 +7,6 @@
  chromadb
  tiktoken
  seaborn
- seaborn matplotlib
+ seaborn 
+ matplotlib
  Pillow
