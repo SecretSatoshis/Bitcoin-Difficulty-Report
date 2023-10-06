@@ -82,7 +82,7 @@ correlation_results = data_format.create_btc_correlation_tables(report_date, tic
 import report_tables
 
 # Create the difficulty update table
-difficulty_update_table = report_tables.create_difficulty_update_table(report_data, difficulty_report, report_date)
+difficulty_update_table = report_tables.create_difficulty_update_table(report_data, difficulty_report, report_date, difficulty_period_changes)
 
 # Create the difficulty big numbers
 difficulty_big_numbers = report_tables.create_difficulty_big_numbers(difficulty_update_table)

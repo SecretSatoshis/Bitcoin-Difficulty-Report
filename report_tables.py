@@ -4,7 +4,7 @@ import seaborn as sns
 
 
 # Create Summary Table
-def create_difficulty_update_table(report_data, difficulty_report, report_date):
+def create_difficulty_update_table(report_data, difficulty_report, report_date, difficulty_period_changes):
   # Extract data from report_data for the specific date
   report_date_data = report_data.loc[report_date].name
   bitcoin_supply = report_data.loc[report_date, 'SplyCur']
@@ -12,6 +12,7 @@ def create_difficulty_update_table(report_data, difficulty_report, report_date):
   PriceUSD = report_data.loc[report_date, 'PriceUSD']
   Marketcap = report_data.loc[report_date, 'CapMrktCurUSD']
   sats_per_dollar = 100000000 / report_data.loc[report_date, 'PriceUSD']
+  difficulty_period_return = difficulty_period_changes.loc['PriceUSD']
 
   # Extract data from difficulty_report
   block_height = difficulty_report['last_difficulty_change'][0]['block_height']
@@ -29,6 +30,7 @@ def create_difficulty_update_table(report_data, difficulty_report, report_date):
       "Price USD": PriceUSD,
       "Marketcap": Marketcap,
       "Sats Per Dollar": sats_per_dollar,
+      "Bitcoin Price Change Difficulty Period": difficulty_period_return
   }
 
   # Create and return the "Difficulty Update" DataFrame
