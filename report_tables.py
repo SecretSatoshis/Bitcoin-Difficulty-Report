@@ -74,6 +74,8 @@ def create_difficulty_big_numbers(difficulty_update_df):
   big_numbers = []
 
   for column, value in difficulty_update_df.iloc[0].items():
+    if column == "Bitcoin Price Change Difficulty Period":
+      continue  # Skip this entry
     formatted_value = format_value(value, format_rules.get(column, ""))
     if column == "Difficulty Change":
       # Assuming positive change is upward, negative is downward
