@@ -1,27 +1,27 @@
 import datapane as dp
 
 
-def generate_report_layout(difficulty_big_numbers, performance_table,
-                           fundamentals_table, valuation_table):
+def generate_report_layout(difficulty_big_numbers, performance_table, fundamentals_table, valuation_table):
   welcome_text = dp.Text("""
   ## Secret Satoshis Difficulty Report
   
-  Explore our latest difficulty report, the driving force behind our "Difficulty Adjustment Newsletter." This newsletter is delivered following each Bitcoin difficulty adjustment and is available @ 
+  Explore our latest difficulty report, the driving force behind our <a href="https://www.newsletter.secretsatoshis.com/s/premium" target="_blank">Difficulty Adjustment Newsletter</a>. This newsletter is delivered following each Bitcoin difficulty adjustment and is available @ 
   
-  [newsletter.secretsatoshis.com](https://www.newsletter.secretsatoshis.com/).
+  [<a href="https://www.newsletter.secretsatoshis.com/" target="_blank">newsletter.secretsatoshis.com</a>](https://www.newsletter.secretsatoshis.com/).
   
   ## Report Navigation:
   
   The report is organized into three distinct sections, each accessible through individual tabs for a structured exploration:
+  
+  1. **Difficulty Report**: A detailed analysis of the current state of Bitcoin.
+  
+  2. **Difficulty Report FAQ**: A section dedicated to providing answers to commonly asked questions regarding the report.
+  
+  3. **Report Definitions/Glossary**: A section that serves as a glossary, explaining the key terms, metrics, and concepts discussed throughout the report.
+  
+  To navigate between different sections, click on the respective tab.
+""")
 
-1. **Difficulty Report**: A detailed analysis of the current state of Bitcoin.
-   
-2. **Difficulty Report FAQ**: A section dedicated to providing answers to commonly asked questions regarding the report.
-   
-3. **Report Definitions/Glossary**: A section that serves as a glossary, explaining the key terms, metrics, and concepts discussed throughout the report.
-
-To navigate between different sections, click on the respective tab.
-  """)
 
   # Difficulty Report Summary Section Components
   difficulty_header = dp.Text("# Difficulty Report Summary")
@@ -56,6 +56,23 @@ To navigate between different sections, click on the respective tab.
       "For a deeper dive into the valuation metrics, visit the Report Definitions Tab above."
   )
 
+  # Difficulty Adjustment Newsletter Promo
+  promo_header = dp.Text("# The Next Step in Your Bitcoin Exploration: The Difficulty Adjustment Newsletter")
+  promo_description = dp.Text("""
+  The Difficulty Adjustment Newsletter provides a comprehensive narrative on the data presented in the "Difficulty Report", offering enhanced insights into the Bitcoin market.
+
+  **Why Subscribe?**
+
+  1. **Clear, In-depth Analysis:** Understand the nuances of the data in the Difficulty Report through a concise, well-written narrative.
+
+  2. **Stay Ahead of the Curve:** Receive timely updates on crucial Bitcoin investment metrics, ensuring you're always informed.
+
+  3. **Expertise of Agent 21:** Benefit from the expertise of Agent 21, an AI persona powered by ChatGPT4, delivering content that's both clear and relevant.
+
+  Ready to further enhance your grasp on Bitcoin?
+<a href="https://www.newsletter.secretsatoshis.com/s/premium" target="_blank">Sign Up Now</a>.
+  """)
+  
   # Difficulty Report Summary
   difficulty_summary_layout = dp.Group(
       difficulty_header,
@@ -73,6 +90,8 @@ To navigate between different sections, click on the respective tab.
       valuation_description,
       valuation_table,
       valuation_footer,
+      promo_header,
+      promo_description,
       columns=1,
   )
 
