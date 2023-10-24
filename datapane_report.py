@@ -57,7 +57,7 @@ def generate_report_layout(difficulty_big_numbers, performance_table, fundamenta
   )
 
   # Difficulty Adjustment Newsletter Promo
-  promo_header = dp.Text("# The Next Step in Your Bitcoin Exploration: The Difficulty Adjustment Newsletter")
+  promo_header = dp.Text("# The Next Step in Your Bitcoin Exploration: <a href='https://www.newsletter.secretsatoshis.com/s/premium' target='_blank'>The Difficulty Adjustment Newsletter</a>")
   promo_description = dp.Text("""
   The Difficulty Adjustment Newsletter provides a comprehensive narrative on the data presented in the "Difficulty Report", offering enhanced insights into the Bitcoin market.
 
@@ -67,11 +67,12 @@ def generate_report_layout(difficulty_big_numbers, performance_table, fundamenta
 
   2. **Stay Ahead of the Curve:** Receive timely updates on crucial Bitcoin investment metrics, ensuring you're always informed.
 
-  3. **Expertise of Agent 21:** Benefit from the expertise of Agent 21, an AI persona powered by ChatGPT4, delivering content that's both clear and relevant.
+  3. **Expertise of Agent 21:** Benefit from the insights of Agent 21, an AI persona powered by ChatGPT4.
 
-  Ready to further enhance your grasp on Bitcoin?
-<a href="https://www.newsletter.secretsatoshis.com/s/premium" target="_blank">Sign Up Now</a>.
+  Ready to further enhance your understanding of Bitcoin?
+  <a href="https://www.newsletter.secretsatoshis.com/s/premium" target="_blank">Subscribe Now</a>.
   """)
+
   
   # Difficulty Report Summary
   difficulty_summary_layout = dp.Group(
