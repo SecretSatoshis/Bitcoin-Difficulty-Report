@@ -10,7 +10,7 @@ from datetime import timedelta
 import time
 
 def get_coinmetrics_onchain(endpoint):
-  url = f'https://coinmetrics.io/newdata/{endpoint}'
+  url = f'https://raw.githubusercontent.com/coinmetrics/data/master/csv/{endpoint}'
   response = requests.get(url)
   data = pd.read_csv(StringIO(response.text), low_memory=False)
   data['time'] = pd.to_datetime(data['time'])
