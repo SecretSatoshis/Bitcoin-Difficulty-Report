@@ -531,7 +531,7 @@ def create_bitcoin_fundamentals_table(report_data, difficulty_period_changes,
       '52_week_low']
   VelCur1yr_52_low = weekly_high_low['VelCur1yr']['52_week_low']
 
-  HashRate_difficulty_change = difficulty_period_changes.loc['HashRate']
+  HashRate_difficulty_change = difficulty_period_changes.loc['7_day_ma_HashRate']
   TxCnt_difficulty_change = difficulty_period_changes.loc['TxCnt']
   TxTfrValAdjUSD_difficulty_change = difficulty_period_changes.loc[
       'TxTfrValAdjUSD']

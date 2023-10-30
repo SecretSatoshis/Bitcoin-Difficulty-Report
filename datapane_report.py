@@ -3,19 +3,17 @@ import datapane as dp
 
 def generate_report_layout(difficulty_big_numbers, performance_table, fundamentals_table, valuation_table):
   welcome_text = dp.Text("""
-  ## Secret Satoshis Difficulty Report
+  ## Secret Satoshis Difficulty Adjustment Data Report
   
-  Explore our latest difficulty report, the driving force behind our <a href="https://www.newsletter.secretsatoshis.com/s/premium" target="_blank">Difficulty Adjustment Newsletter</a>. This newsletter is delivered following each Bitcoin difficulty adjustment and is available @ 
-  
-  [<a href="https://www.newsletter.secretsatoshis.com/" target="_blank">newsletter.secretsatoshis.com</a>](https://www.newsletter.secretsatoshis.com/).
+  Explore our latest difficulty adjustment data report, the driving force behind our <a href="https://www.newsletter.secretsatoshis.com/s/premium" target="_blank">Secret Satoshis Difficulty Adjustment Report</a>. This report is delivered following each Bitcoin difficulty adjustment and is available @ [<a href="https://www.newsletter.secretsatoshis.com/" target="_blank">newsletter.secretsatoshis.com</a>](https://www.newsletter.secretsatoshis.com/).
   
   ## Report Navigation:
   
   The report is organized into three distinct sections, each accessible through individual tabs for a structured exploration:
   
-  1. **Difficulty Report**: A detailed analysis of the current state of Bitcoin.
+  1. **Difficulty Adjustment Data Report**: A detailed analysis of the current state of Bitcoin.
   
-  2. **Difficulty Report FAQ**: A section dedicated to providing answers to commonly asked questions regarding the report.
+  2. **Difficulty Adjustment Data Report FAQ**: A section dedicated to providing answers to commonly asked questions regarding the report.
   
   3. **Report Definitions/Glossary**: A section that serves as a glossary, explaining the key terms, metrics, and concepts discussed throughout the report.
   
@@ -24,7 +22,7 @@ def generate_report_layout(difficulty_big_numbers, performance_table, fundamenta
 
 
   # Difficulty Report Summary Section Components
-  difficulty_header = dp.Text("# Difficulty Report Summary")
+  difficulty_header = dp.Text("# Difficulty Adjustment Report Summary")
   difficulty_footer = dp.Text(
       "For a deeper dive into the key metrics, visit the Report Definitions Tab above."
   )
@@ -57,17 +55,17 @@ def generate_report_layout(difficulty_big_numbers, performance_table, fundamenta
   )
 
   # Difficulty Adjustment Newsletter Promo
-  promo_header = dp.Text("# The Next Step in Your Bitcoin Exploration: <a href='https://www.newsletter.secretsatoshis.com/s/premium' target='_blank'>The Difficulty Adjustment Newsletter</a>")
+  promo_header = dp.Text("# The Next Step in Your Bitcoin Exploration: <a href='https://www.newsletter.secretsatoshis.com/s/premium' target='_blank'>The Difficulty Adjustment Report</a>")
   promo_description = dp.Text("""
-  The Difficulty Adjustment Newsletter provides a comprehensive narrative on the data presented in the "Difficulty Report", offering enhanced insights into the Bitcoin market.
+  The Difficulty Adjustment Report provides a comprehensive narrative on the data presented, offering enhanced insights into the Bitcoin market.
 
   **Why Subscribe?**
 
-  1. **Clear, In-depth Analysis:** Understand the nuances of the data in the Difficulty Report through a concise, well-written narrative.
+  1. **Clear, In-depth Analysis:** Understand the nuances of the data in the Difficulty Adjustment Data Report through a concise, well-written narrative.
 
   2. **Stay Ahead of the Curve:** Receive timely updates on crucial Bitcoin investment metrics, ensuring you're always informed.
 
-  3. **Expertise of Agent 21:** Benefit from the insights of Agent 21, an AI persona powered by ChatGPT4.
+  3. **Expertise of Agent 21:** Benefit from the insights of Agent 21, an AI persona powered by Chat-GPT 4.
 
   Ready to further enhance your understanding of Bitcoin?
   <a href="https://www.newsletter.secretsatoshis.com/s/premium" target="_blank">Subscribe Now</a>.
@@ -97,16 +95,16 @@ def generate_report_layout(difficulty_big_numbers, performance_table, fundamenta
   )
 
   faq_summary_text = dp.Text("""
-  ## Frequently Asked Questions (FAQ) for the Difficulty Report
+  ## Frequently Asked Questions (FAQ) for the Difficulty Adjustment Data Report
   
   1. **What is the "Difficulty Report"?**
-  The "Difficulty Report" is a comprehensive data report that serves as the foundation for the "Difficulty Adjustment Newsletter." It offers an in-depth analysis of Bitcoin's performance, focusing on pivotal financial and on-chain metrics, and includes all the  data and tables that are highlighted in the newsletter.
+  The "Difficulty Adjustment Data Report" is a comprehensive data report that serves as the foundation for the "Secret Satoshis Difficulty Adjustment Report." It offers an in-depth analysis of Bitcoin's performance, focusing on pivotal financial and on-chain metrics, and includes all the  data and tables that are highlighted in the newsletter.
   
-  2. **How does the "Difficulty Report" relate to the "Difficulty Adjustment Newsletter"?**
-  The "Difficulty Report" serves as a primary data source for the "Difficulty Adjustment Newsletter". While the newsletter distills this data into actionable narratives and insights, the report allows readers to independently analyze the data, facilitating a deep and comprehensive understanding of the Bitcoin market.
+  2. **How does the "Difficulty Adjustment Data Report" relate to the "Secret Satoshis Difficulty Adjustment Reprot"?**
+  The "Difficulty Adjustment Data Report" serves as a primary data source for the "Difficulty Adjustment Report". While the report distills this data into actionable narratives and insights, the data report allows readers to independently analyze the data, facilitating a deep and comprehensive understanding of the Bitcoin market.
 
- 3. **How often is the "Difficulty Report" updated?**
-  The "Difficulty Report" is updated daily, presenting data with a T+1 timeline.
+ 3. **How often is the "Difficulty Adjustment Data Report" updated?**
+  The "Difficulty Adjustmnent Data Report" is updated daily, presenting data with a T+1 timeline.
   """)
 
   difficulty_adjustment_summary_text = dp.Text("""
@@ -603,7 +601,7 @@ Through a deep understanding of the difficulty adjustment, the "Difficulty Repor
   # Definition Summary
   definition_layout = dp.Group(definition_header, definition_tabs, columns=1)
   report_tabs = dp.Select(blocks=[
-      dp.Group(difficulty_summary_layout, label="Difficulty Report"),
+      dp.Group(difficulty_summary_layout, label="Difficulty Adjustment Data Report"),
       dp.Group(faq_tabs, label="Difficulty Report FAQ"),
       dp.Group(definition_layout, label="Report Definitions / Glossary")
   ])
