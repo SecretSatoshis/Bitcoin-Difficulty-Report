@@ -9,7 +9,8 @@
 6. [Output Overview](#output-overview)
 7. [Report Interface](#report-interface)
 8. [Data Sources](#data-sources)
-9. [License](#license)
+9. [Automation](#Automated-report-updates-with-gitHub-actions)
+10. [License](#license)
 
 ## Introduction
 The Bitcoin Difficulty Report is a Python project designed to analyze various metrics and data points related to Bitcoin and other financial assets. The project retrieves data from various sources, processes it, and generates a comprehensive report that includes a wide range of financial metrics, valuation metrics, and statistical analyses. It is a valuable tool for investors, financial analysts, and cryptocurrency enthusiasts looking to gain insights into the cryptocurrency market and traditional financial markets.
@@ -88,6 +89,13 @@ The project utilizes data from various sources. The data sources include:
 - **Blockstream**
   - [Twitter](https://twitter.com/Blockstream)
   - [API Documentation](https://github.com/Blockstream/esplora/blob/master/API.md)
+
+## Automated Report Updates With GitHub Actions
+
+The report is updated daily using a GitHub Actions workflow. 
+
+The workflow is scheduled to run every day at 16:10 UTC. It runs the `main.py` script, which generates the updated report. After running the script, the workflow stages, commits, and pushes the changes to the main branch of the repository. This way, the report is updated on a daily basis.
+
 
 ## License
 Distributed under the GNU GENERAL PUBLIC LICENSE. See `LICENSE` for more information.
