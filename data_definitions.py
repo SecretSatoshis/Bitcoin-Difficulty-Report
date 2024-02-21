@@ -11,7 +11,7 @@ tickers = {
         'BITQ', 'CLOU', 'ARKK', 'XLK', 'QQQ', 'IUIT.L', 'VTI', 'TLT', 'LQD',
         'JNK', 'GLD', 'XLF', 'XLRE', 'SHY', 'XLE', 'FANG.AX'
     ],
-    'indices': ['^GSPC', '^VIX', '^IXIC', '^TNX', '^TYX', '^FVX', '^IRX'],
+    'indices': ['^GSPC', '^VIX', '^IXIC', '^TNX', '^TYX', '^FVX', '^IRX','^BCOM'],
     'commodities': ['GC=F', 'CL=F', 'SI=F'],
     'forex': [
         'DX=F', 'AUDUSD=X', 'CHFUSD=X', 'CNYUSD=X', 'EURUSD=X', 'GBPUSD=X',
@@ -92,7 +92,7 @@ filter_data_columns = {
         'AAPL_close', 'CapMrktCurUSD', '^IXIC_close', "RevHashRateUSD",
         '^GSPC_close', 'XLF_close', 'XLRE_close', 'GC=F_close', 'SI=F_close',
         'DX=F_close', 'SHY_close', 'TLT_close', '^TNX_close', '^TYX_close',
-        '^FVX_close', '^IRX_close', 'XLE_close', 'BITQ_close', 'FANG.AX_close',
+        '^FVX_close', '^IRX_close', 'XLE_close', 'BITQ_close', 'FANG.AX_close','^BCOM_close',
         'AAPL_mc_btc_price','AAPL_MarketCap', 'AUDUSD=X_close', 'CHFUSD=X_close',
         'CNYUSD=X_close', 'EURUSD=X_close', 'GBPUSD=X_close', 'HKDUSD=X_close',
         'INRUSD=X_close', 'JPYUSD=X_close', 'RUBUSD=X_close',
@@ -114,7 +114,7 @@ correlation_data = [
     'NVDA_close', 'TSLA_close', 'META_close', 'BRK-A_close', 'BRK-B_close',
     'TSM_close', 'V_close', 'JPM_close', 'PYPL_close', 'GS_close',
     'FANG.AX_close', 'BITQ_close', 'CLOU_close', 'ARKK_close', 'XLK_close',
-    'QQQ_close', 'IUIT.L_close', 'VTI_close', 'TLT_close', 'LQD_close',
+    'QQQ_close', 'IUIT.L_close', 'VTI_close', 'TLT_close', 'LQD_close', '^BCOM_close',
     'JNK_close', 'GLD_close', 'XLF_close', 'XLRE_close', 'SHY_close',
     'XLE_close', '^GSPC_close', '^VIX_close', '^IXIC_close', '^TNX_close',
     '^TNX_close', '^TYX_close', '^FVX_close', '^IRX_close', 'GC=F_close',

@@ -107,8 +107,8 @@ def create_performance_table(report_data, difficulty_period_changes,
           "Bitcoin",
           "Price":
           report_data.loc[report_date, 'PriceUSD'],
-          "1 Day Return":
-          report_data.loc[report_date, 'PriceUSD_1_change'],
+          "7 Day Return":
+          report_data.loc[report_date, 'PriceUSD_7_change'],
           "Difficulty Period Return":
           difficulty_period_changes.loc['PriceUSD'],
           "MTD Return":
@@ -133,8 +133,8 @@ def create_performance_table(report_data, difficulty_period_changes,
           "Nasdaq",
           "Price":
           report_data.loc[report_date, '^IXIC_close'],
-          "1 Day Return":
-          report_data.loc[report_date, '^IXIC_close_1_change'],
+          "7 Day Return":
+          report_data.loc[report_date, '^IXIC_close_7_change'],
           "Difficulty Period Return":
           difficulty_period_changes.loc['^IXIC_close'],
           "MTD Return":
@@ -160,8 +160,8 @@ def create_performance_table(report_data, difficulty_period_changes,
           "S&P500",
           "Price":
           report_data.loc[report_date, '^GSPC_close'],
-          "1 Day Return":
-          report_data.loc[report_date, '^GSPC_close_1_change'],
+          "7 Day Return":
+          report_data.loc[report_date, '^GSPC_close_7_change'],
           "Difficulty Period Return":
           difficulty_period_changes.loc['^GSPC_close'],
           "MTD Return":
@@ -187,8 +187,8 @@ def create_performance_table(report_data, difficulty_period_changes,
           "XLF Financials ETF",
           "Price":
           report_data.loc[report_date, 'XLF_close'],
-          "1 Day Return":
-          report_data.loc[report_date, 'XLF_close_1_change'],
+          "7 Day Return":
+          report_data.loc[report_date, 'XLF_close_7_change'],
           "Difficulty Period Return":
           difficulty_period_changes.loc['XLF_close'],
           "MTD Return":
@@ -208,39 +208,39 @@ def create_performance_table(report_data, difficulty_period_changes,
           "52 Week High":
           weekly_high_low['XLF_close']['52_week_high'],
       },
-      "XLE": {
+      "^BCOM": {
           "Asset":
-          "XLE Energy ETF",
+          "Bloomberg Commodity Index",
           "Price":
-          report_data.loc[report_date, 'XLE_close'],
-          "1 Day Return":
-          report_data.loc[report_date, 'XLE_close_1_change'],
+          report_data.loc[report_date, '^BCOM_close'],
+          "7 Day Return":
+          report_data.loc[report_date, '^BCOM_close_7_change'],
           "Difficulty Period Return":
-          difficulty_period_changes.loc['XLE_close'],
+          difficulty_period_changes.loc['^BCOM_close'],
           "MTD Return":
-          report_data.loc[report_date, 'XLE_close_MTD_change'],
+          report_data.loc[report_date, '^BCOM_close_MTD_change'],
           "90 Day Return":
-          report_data.loc[report_date, 'XLE_close_90_change'],
+          report_data.loc[report_date, '^BCOM_close_90_change'],
           "YTD Return":
-          report_data.loc[report_date, 'XLE_close_YTD_change'],
+          report_data.loc[report_date, '^BCOM_close_YTD_change'],
           "4 Year CAGR":
-          cagr_results.loc[report_date, 'XLE_close_4_Year_CAGR'],
+          cagr_results.loc[report_date, '^BCOM_close_4_Year_CAGR'],
           "4 Year Sharpe":
-          sharpe_results['XLE_close']['4_year'].loc[report_date],
+          sharpe_results['^BCOM_close']['4_year'].loc[report_date],
           "90 Day BTC Correlation":
-          correlation_results['priceusd_90_days'].loc['PriceUSD', 'XLE_close'],
+          correlation_results['priceusd_90_days'].loc['PriceUSD', '^BCOM_close'],
           "52 Week Low":
-          weekly_high_low['XLE_close']['52_week_low'],
+          weekly_high_low['^BCOM_close']['52_week_low'],
           "52 Week High":
-          weekly_high_low['XLE_close']['52_week_high'],
+          weekly_high_low['^BCOM_close']['52_week_high'],
       },
       "FANG+": {
           "Asset":
           "FANG+ ETF",
           "Price":
           report_data.loc[report_date, 'FANG.AX_close'],
-          "1 Day Return":
-          report_data.loc[report_date, 'FANG.AX_close_1_change'],
+          "7 Day Return":
+          report_data.loc[report_date, 'FANG.AX_close_7_change'],
           "Difficulty Period Return":
           difficulty_period_changes.loc['FANG.AX_close'],
           "MTD Return":
@@ -266,8 +266,8 @@ def create_performance_table(report_data, difficulty_period_changes,
           "BITQ Crypto Industry ETF",
           "Price":
           report_data.loc[report_date, 'BITQ_close'],
-          "1 Day Return":
-          report_data.loc[report_date, 'BITQ_close_1_change'],
+          "7 Day Return":
+          report_data.loc[report_date, 'BITQ_close_7_change'],
           "Difficulty Period Return":
           difficulty_period_changes.loc['BITQ_close'],
           "MTD Return":
@@ -293,8 +293,8 @@ def create_performance_table(report_data, difficulty_period_changes,
           "Gold",
           "Price":
           report_data.loc[report_date, 'GC=F_close'],
-          "1 Day Return":
-          report_data.loc[report_date, 'GC=F_close_1_change'],
+          "7 Day Return":
+          report_data.loc[report_date, 'GC=F_close_7_change'],
           "Difficulty Period Return":
           difficulty_period_changes.loc['GC=F_close'],
           "MTD Return":
@@ -320,8 +320,8 @@ def create_performance_table(report_data, difficulty_period_changes,
           "US Dollar Index",
           "Price":
           report_data.loc[report_date, 'DX=F_close'],
-          "1 Day Return":
-          report_data.loc[report_date, 'DX=F_close_1_change'],
+          "7 Day Return":
+          report_data.loc[report_date, 'DX=F_close_7_change'],
           "Difficulty Period Return":
           difficulty_period_changes.loc['DX=F_close'],
           "MTD Return":
@@ -347,8 +347,8 @@ def create_performance_table(report_data, difficulty_period_changes,
           "TLT Treasury Bond ETF",
           "Price":
           report_data.loc[report_date, 'TLT_close'],
-          "1 Day Return":
-          report_data.loc[report_date, 'TLT_close_1_change'],
+          "7 Day Return":
+          report_data.loc[report_date, 'TLT_close_7_change'],
           "Difficulty Period Return":
           difficulty_period_changes.loc['TLT_close'],
           "MTD Return":
@@ -383,7 +383,7 @@ def style_performance_table(performance_table):
   format_dict = {
       'Asset': '{}',
       'Price': '{:,.2f}',
-      "1 Day Return": '{:.2%}',
+      "7 Day Return": '{:.2%}',
       'Difficulty Period Return': '{:.2f}%',
       'MTD Return': '{:.2%}',
       '90 Day Return': '{:.2%}',
@@ -404,7 +404,7 @@ def style_performance_table(performance_table):
     return 'color: %s' % color
 
   gradient_columns = [
-      '1 Day Return', 'Difficulty Period Return', 'MTD Return',
+      '7 Day Return', 'Difficulty Period Return', 'MTD Return',
       '90 Day Return', 'YTD Return', '4 Year CAGR', '4 Year Sharpe',
       '90 Day BTC Correlation'
   ]
@@ -474,18 +474,18 @@ def create_bitcoin_fundamentals_table(report_data, difficulty_period_changes,
       report_date, 'supply_pct_1_year_plus_90_change']
   VelCur1yr_90 = report_data.loc[report_date, 'VelCur1yr_90_change']
 
-  HashRate_1 = report_data.loc[report_date, 'HashRate_1_change']
-  TxCnt_1 = report_data.loc[report_date, 'TxCnt_1_change']
-  TxTfrValAdjUSD_1 = report_data.loc[report_date, 'TxTfrValAdjUSD_1_change']
-  TxTfrValMeanUSD_1 = report_data.loc[report_date,
-                                      '7_day_ma_TxTfrValMeanUSD_1_change']
-  RevUSD_1 = report_data.loc[report_date, 'RevUSD_1_change']
-  AdrActCnt_1 = report_data.loc[report_date, 'AdrActCnt_1_change']
-  AdrBalUSD10Cnt_1 = report_data.loc[report_date, 'AdrBalUSD10Cnt_1_change']
-  FeeTotUSD_1 = report_data.loc[report_date, 'FeeTotUSD_1_change']
-  supply_pct_1_year_plus_1 = report_data.loc[report_date,
-                                             'supply_pct_1_year_plus_1_change']
-  VelCur1yr_1 = report_data.loc[report_date, 'VelCur1yr_1_change']
+  HashRate_7 = report_data.loc[report_date, 'HashRate_7_change']
+  TxCnt_7 = report_data.loc[report_date, 'TxCnt_7_change']
+  TxTfrValAdjUSD_7 = report_data.loc[report_date, 'TxTfrValAdjUSD_7_change']
+  TxTfrValMeanUSD_7 = report_data.loc[report_date,
+                                      '7_day_ma_TxTfrValMeanUSD_7_change']
+  RevUSD_7 = report_data.loc[report_date, 'RevUSD_7_change']
+  AdrActCnt_7 = report_data.loc[report_date, 'AdrActCnt_7_change']
+  AdrBalUSD10Cnt_7 = report_data.loc[report_date, 'AdrBalUSD10Cnt_7_change']
+  FeeTotUSD_7 = report_data.loc[report_date, 'FeeTotUSD_7_change']
+  supply_pct_1_year_plus_7 = report_data.loc[report_date,
+                                             'supply_pct_1_year_plus_7_change']
+  VelCur1yr_7 = report_data.loc[report_date, 'VelCur1yr_7_change']
 
   HashRate_CAGR = cagr_results.loc[report_date, 'HashRate_4_Year_CAGR']
   TxCnt_CAGR = cagr_results.loc[report_date, 'TxCnt_4_Year_CAGR']
@@ -558,10 +558,10 @@ def create_bitcoin_fundamentals_table(report_data, difficulty_period_changes,
           HashRate, TxCnt, TxTfrValAdjUSD, TxTfrValMeanUSD, AdrActCnt,
           AdrBalUSD10Cnt, RevUSD, FeeTotUSD, supply_pct_1_year_plus, VelCur1yr
       ],
-      "1 Day Change": [
-          HashRate_1, TxCnt_1, TxTfrValAdjUSD_1, TxTfrValMeanUSD_1,
-          AdrActCnt_1, AdrBalUSD10Cnt_1, RevUSD_1, FeeTotUSD_1,
-          supply_pct_1_year_plus_1, VelCur1yr_1
+      "7 Day Change": [
+          HashRate_7, TxCnt_7, TxTfrValAdjUSD_7, TxTfrValMeanUSD_7,
+          AdrActCnt_7, AdrBalUSD10Cnt_7, RevUSD_7, FeeTotUSD_7,
+          supply_pct_1_year_plus_7, VelCur1yr_7
       ],
       "Difficulty Period Change": [
           HashRate_difficulty_change, TxCnt_difficulty_change,
@@ -641,7 +641,7 @@ def style_bitcoin_fundamentals_table(fundamentals_table):
 
   format_dict_fundamentals = {
       'Metrics Name': '{}',
-      "1 Day Change": '{:.2%}',
+      "7 Day Change": '{:.2%}',
       'Difficulty Period Change': '{:.2f}%',
       'MTD Change': '{:.2%}',
       '90 Day Change': '{:.2%}',
@@ -665,7 +665,7 @@ def style_bitcoin_fundamentals_table(fundamentals_table):
 
   # Columns to apply the background gradient on
   gradient_columns = [
-      '1 Day Change', 'Difficulty Period Change', 'MTD Change',
+      '7 Day Change', 'Difficulty Period Change', 'MTD Change',
       '90 Day Change', 'YTD Change', '4 Year CAGR'
   ]
 
