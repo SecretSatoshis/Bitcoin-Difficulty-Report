@@ -84,6 +84,20 @@ def get_marketcap(tickers, start_date):
       data[f'{ticker}_MarketCap'] = [None] * len(date_range)
   print("Yahoo Finance Marketcap Data Call Completed")
   return data
+  
+def get_miner_data(google_sheet_url):
+  try:
+    # Constructing the CSV export URL from the Google Sheets URL
+    csv_export_url = google_sheet_url.replace('/edit?usp=sharing', '/export?format=csv')
+
+    # Loading the data into a pandas DataFrame
+    df = pd.read_csv(csv_export_url)
+    df['time'] = pd.to_datetime(df['time'])  # Ensure 'time' is datetime type
+    print("Miner Data Completed")
+    return df
+  except Exception as e:
+    print("Error loading the Google Sheet:", e)
+    return None
 
 def calculate_custom_on_chain_metrics(data):
 # New Metrics Based On Coinmetrics Data
@@ -160,6 +174,35 @@ def calculate_gold_market_cap_breakdown(data, gold_supply_breakdown):
         metric_name = 'gold_marketcap_' + category.replace(' ', '_').lower() + '_billion_usd'
         data[metric_name] = category_marketcap_billion_usd  
     return data
+  
+def calculate_btc_price_to_surpass_metal_categories(data, gold_supply_breakdown):
+  new_columns = {}
+
+  # Calculate the number of rows in the DataFrame for creating Series
+  num_rows = len(data)
+
+  # Gold calculations
+  gold_marketcap_billion_usd = data['gold_marketcap_billion_usd'].iloc[-1]
+  new_columns['gold_marketcap_btc_price'] = pd.Series([gold_marketcap_billion_usd / data['SplyCur'].iloc[-2]] * num_rows)
+
+  # Gold subcategories
+  for i, row in gold_supply_breakdown.iterrows():
+      category = row['Gold Supply Breakdown']
+      percentage_of_market = row['Percentage Of Market']
+      category_marketcap_billion_usd = gold_marketcap_billion_usd * (percentage_of_market / 100.0)
+
+      # Create metric name
+      metric_name = 'gold_' + category.replace(' ', '_').lower() + '_marketcap_btc_price'
+      new_columns[metric_name] = pd.Series([category_marketcap_billion_usd / data['SplyCur'].iloc[-2]] * num_rows)
+
+  # Silver calculations
+  silver_marketcap_billion_usd = data['silver_marketcap_billion_usd'].iloc[-1]
+  new_columns['silver_marketcap_btc_price'] = pd.Series([silver_marketcap_billion_usd / data['SplyCur'].iloc[-2]] * num_rows)
+
+  # Use pd.concat to add the new columns to the DataFrame
+  data = pd.concat([data, pd.DataFrame(new_columns)], axis=1)
+  return data
+
 
 def calculate_btc_price_to_surpass_fiat(data, fiat_money_data):
     for i, row in fiat_money_data.iterrows():
@@ -185,52 +228,143 @@ def calculate_btc_price_for_stock_mkt_caps(data, stock_tickers):
 
 
 def calculate_stock_to_flow_metrics(data):
-    # Extract the start of each month's data
-    btc_monthly_data = data.resample('M').first()
+  # Initialize a dictionary to hold new columns
+  new_columns = {}
 
-    # Calculate the monthly flow
-    btc_monthly_data['Flow'] = btc_monthly_data['SplyCur'].diff() * 12
+  # Calculate monthly change in adjusted supply
+  new_columns['Monthly_Change'] = data['SplyCur'].diff(periods=31)  # Assuming approximately 30 days per month
 
-    # Calculate Stock-to-Flow
-    btc_monthly_data['SF'] = btc_monthly_data['SplyCur'] / btc_monthly_data['Flow']
+  # Annualize the monthly flow
+  new_columns['Annual_Flow'] = new_columns['Monthly_Change'] * 12
 
-    # Extract the monthly average price and add it to the resampled data
-    btc_monthly_data['PriceUSD'] = data['PriceUSD'].resample('M').mean()
+  # Calculate S2F using adjusted supply
+  new_columns['SF'] = data['SplyCur'] / new_columns['Annual_Flow']
 
-    # Removing the first row as it doesn't have a valid SF value due to the diff operation
-    btc_monthly_data = btc_monthly_data[1:]
+  # Applying the linear regression formula
+  new_columns['SF_Predicted_Market_Value'] = np.exp(14.6) * new_columns['SF']**3.3
 
-    # Extracting the relevant columns
-    sf_data = btc_monthly_data[['SplyCur', 'Flow', 'SF', 'PriceUSD']].dropna()
+  # Calculating the predicted market price using adjusted supply
+  new_columns['SF_Predicted_Price'] = new_columns['SF_Predicted_Market_Value'] / data['SplyCur']
 
-    # Calculating market value (supply * price)
-    sf_data['MarketValue'] = sf_data['SplyCur'] * sf_data['PriceUSD']
+  # Apply a 365-day moving average to the predicted S2F price
+  new_columns['SF_Predicted_Price_MA365'] = new_columns['SF_Predicted_Price'].rolling(window=365).mean()
 
-    # Using linear regression on the natural logarithm of SF and Market Value
-    slope, intercept, r_value, p_value, std_err = linregress(np.log(sf_data['SF']), np.log(sf_data['MarketValue']))
+  # Calculating the S/F multiple using the actual price and the 365-day MA of the predicted price
+  new_columns['SF_Multiple'] = data['PriceUSD'] / new_columns['SF_Predicted_Price_MA365']
 
-    # Using the power-law relationship to calculate the predicted Market Value based on SF
-    btc_monthly_data['SF_Predicted_Market_Value'] = np.exp(intercept) * btc_monthly_data['SF']**slope
+  # Concatenate all new columns to the DataFrame at once
+  data = pd.concat([data, pd.DataFrame(new_columns)], axis=1)
 
-    # Calculating the predicted market price by dividing the Predicted Market Value by the supply for that month
-    btc_monthly_data['SF_Predicted_Price'] = btc_monthly_data['SF_Predicted_Market_Value'] / btc_monthly_data['SplyCur']
-    
-    # Calculating the S/F multiple
-    btc_monthly_data['SF_Multiple'] = btc_monthly_data['PriceUSD'] / btc_monthly_data['SF_Predicted_Price']
-    
-    # Resampling to daily frequency and forward filling the metrics
-    sf_daily_data = btc_monthly_data[['Flow', 'SF', 'SF_Predicted_Market_Value', 'SF_Predicted_Price', 'SF_Multiple']].resample('D').ffill()
+  return data
+def calculate_hayes_production_cost(electricity_cost, miner_efficiency_j_gh, network_hashrate_th_s):
+  e_day = electricity_cost * 24 * miner_efficiency_j_gh * network_hashrate_th_s
+  return e_day
 
-    # Adding the new metrics to the original dataframe
-    data = data.combine_first(sf_daily_data)
+def calculate_hayes_network_price_per_btc(electricity_cost_per_kwh, miner_efficiency_j_gh, total_network_hashrate_hs, block_reward, mining_difficulty):
+  SECONDS_PER_HOUR = 3600
+  HOURS_PER_DAY = 24
+  SHA_256_CONSTANT = 2**32
+  THETA = HOURS_PER_DAY * SHA_256_CONSTANT / SECONDS_PER_HOUR
 
-    # Extending the dataset to today's date
-    current_date = pd.Timestamp.now().normalize()
-    if data.index[-1] < current_date:
-        date_range = pd.date_range(start=data.index[-1] + pd.Timedelta(days=1), end=current_date)
-        extension_df = pd.DataFrame(index=date_range)
-        data = data.append(extension_df).ffill()
-    return data
+  total_network_hashrate_th_s = total_network_hashrate_hs / 1e12 
+  btc_per_day_network_expected = THETA * (block_reward * total_network_hashrate_th_s) / mining_difficulty
+  e_day_network = calculate_hayes_production_cost(electricity_cost_per_kwh, miner_efficiency_j_gh, total_network_hashrate_th_s)
+  price_per_btc_network_objective = e_day_network / btc_per_day_network_expected if btc_per_day_network_expected != 0 else None
+  return price_per_btc_network_objective
+
+def calculate_energy_value(network_hashrate_hs, miner_efficiency_j_gh, annual_growth_rate_percent):
+  # Constants for the energy value calculation
+  FIAT_FACTOR = 2.0E-15  # Fiat Factor in USD per Joule
+  SECONDS_PER_YEAR = 365.25 * 24 * 60 * 60  # Including leap years for accuracy
+
+  network_hashrate_th_s = network_hashrate_hs  # Convert H/s to TH/s
+  supply_growth_rate_s = annual_growth_rate_percent / 100 / SECONDS_PER_YEAR
+  miner_efficiency_w_th = miner_efficiency_j_gh * 1000  # Convert J/GH to W/TH
+  energy_input_watts = network_hashrate_th_s * miner_efficiency_w_th
+  energy_value_btc = (energy_input_watts / supply_growth_rate_s) * FIAT_FACTOR
+  return energy_value_btc
+
+def calculate_daily_electricity_consumption_kwh_from_hashrate(network_hashrate_th_s, efficiency_j_gh):
+  # Convert miner efficiency to J/TH (1 TH = 1000 GH)
+  efficiency_j_th = efficiency_j_gh * 1000
+  
+  # Calculate total energy consumption in Joules
+  total_energy_consumption_joules = network_hashrate_th_s * efficiency_j_th * 3600 * 24
+  
+  # Convert Joules to kWh directly
+  daily_electricity_consumption_kwh = total_energy_consumption_joules / (1000 * 3600)
+  
+  return daily_electricity_consumption_kwh
+
+def calculate_bitcoin_production_cost(daily_electricity_consumption_kwh, electricity_cost_per_kwh, PUE, coinbase_issuance, elec_to_total_cost_ratio):
+  # Calculate the total cost of electricity
+  total_electricity_cost = daily_electricity_consumption_kwh * electricity_cost_per_kwh * PUE
+  
+  # Calculate the Bitcoin electricity price using coinbase issuance
+  bitcoin_electricity_price = total_electricity_cost / coinbase_issuance
+  
+  # Calculate and return the Bitcoin production cost
+  return bitcoin_electricity_price / elec_to_total_cost_ratio
+
+def electric_price_models(data):
+  # Constants for energy value calculation
+  FIAT_FACTOR = 2.0E-15
+  SECONDS_PER_YEAR = 365.25 * 24 * 60 * 60
+  ELECTRICITY_COST = 0.05 #per kWh
+  PUE = 1.1  # Power Usage Effectiveness
+  elec_to_total_cost_ratio = 0.6  # Electricity to Total Cost Ratio
+  
+  for index, row in data.iterrows():
+      # Calculate daily electricity consumption in kWh
+      daily_electricity_consumption_kwh = calculate_daily_electricity_consumption_kwh_from_hashrate(row['HashRate'], row['lagged_efficiency_j_gh'])
+  
+      # Calculate Bitcoin production cost
+      production_cost = calculate_bitcoin_production_cost(
+          daily_electricity_consumption_kwh,
+          ELECTRICITY_COST, 
+          PUE, 
+          row['IssContNtv'],  # Coinbase Issuance
+          elec_to_total_cost_ratio
+      )
+  
+      # Update the DataFrame with new values
+      data.at[index, 'Bitcoin_Production_Cost'] = production_cost
+      data.at[index, 'Electricity_Cost'] = production_cost * elec_to_total_cost_ratio
+  
+      # Network Price Per BTC Calculation
+      network_price = calculate_hayes_network_price_per_btc(
+          ELECTRICITY_COST,  # Assumed electricity cost per kWh
+          row['lagged_efficiency_j_gh'],
+          row['HashRate'],
+          row['block_reward'],
+          row['DiffLast']
+      )
+      data.at[index, 'Hayes_Network_Price_Per_BTC'] = network_price
+  
+      # Energy Value Calculation for Lagged Energy Value
+      energy_value = calculate_energy_value(
+          row['HashRate'],
+          row['lagged_efficiency_j_gh'],
+          row['IssContPctAnn']
+      )
+      data.at[index, 'Lagged_Energy_Value'] = energy_value
+  
+      # Now that 'Lagged_Energy_Value' is set, calculate 'Energy_Value_Multiple'
+      if energy_value != 0:
+          energy_value_multiple = row['PriceUSD'] / energy_value
+      else:
+          energy_value_multiple = None
+  
+      data.at[index, 'Energy_Value_Multiple'] = energy_value_multiple
+  
+      # Energy Value Calculation
+      energy_value = calculate_energy_value(
+          row['HashRate'],
+          row['cm_efficiency_j_gh'],
+          row['IssContPctAnn']
+      )
+      data.at[index, 'CM_Energy_Value'] = energy_value  
+  return data
 
 def calculate_statistics(data, start_date):
     # Convert start_date to datetime
@@ -322,7 +456,7 @@ def calculate_ytd_change(data):
   # Calculate the YTD change only if the start of the year is in the index
   for date in data.index:
     if start_of_year[date] in data.index:
-      ytd_change.loc[date, numeric_cols] = data.loc[date, numeric_cols] / data.loc[start_of_year[date], numeric_cols] - 1
+      ytd_change.loc[date, numeric_cols] = (data.loc[date, numeric_cols] / data.loc[start_of_year[date], numeric_cols] - 1) * 100  # Multiplying by 100 here
     else:
       ytd_change.loc[date, numeric_cols] = np.nan
 
@@ -350,6 +484,15 @@ def calculate_mtd_change(data):
   # Rename columns
   mtd_change.columns = [f"{col}_MTD_change" for col in mtd_change.columns]
   return mtd_change
+  
+def calculate_yoy_change(data):
+  # Calculate the year-over-year change for each date in the index
+  yoy_change = data.pct_change(periods=365) * 100   # Assuming data is daily
+
+  # Rename columns
+  yoy_change.columns = [f"{col}_YOY_change" for col in yoy_change.columns]
+
+  return yoy_change
 
 def calculate_time_changes(data, periods):
   changes = pd.DataFrame(index=data.index)
@@ -367,7 +510,9 @@ def get_data(tickers, start_date):
   prices = get_price(tickers, start_date)
   marketcaps = get_marketcap(tickers, start_date)
   fear_greed_index = get_fear_and_greed_index()
+  miner_data = get_miner_data("https://docs.google.com/spreadsheets/d/1GXaY6XE2mx5jnCu5uJFejwV95a0gYDJYHtDE0lmkGeA/edit?usp=sharing")
   data = pd.merge(coindata, prices, on='time', how='left')
+  data = pd.merge(data, miner_data, on='time', how='left')
   data = pd.merge(data, marketcaps, on='time', how='left')
   data = pd.merge(data, fear_greed_index, on='time', how='left')
 
@@ -393,8 +538,11 @@ def calculate_all_changes(data):
   # Calculate MTD changes
   mtd_change = calculate_mtd_change(data[original_columns])
 
+  # Calculate YoY changes
+  yoy_change = calculate_yoy_change(data[original_columns])
+
   # Concatenate all changes at once to avoid DataFrame fragmentation
-  changes = pd.concat([changes, ytd_change, mtd_change], axis=1)
+  changes = pd.concat([changes, ytd_change, mtd_change,yoy_change], axis=1)
   return changes
 
 def run_data_analysis(data, start_date):

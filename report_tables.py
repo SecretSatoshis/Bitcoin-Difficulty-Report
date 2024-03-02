@@ -710,7 +710,7 @@ def create_bitcoin_valuation_table(report_data, difficulty_period_changes,
   mvrv_pct_from_fair_value = (mvrv_price - btc_value) / btc_value
   mvrv_return_to_target = (mvrv_sell_target - btc_value) / btc_value
   mvrv_return_to_buy_target = (mvrv_buy_target - btc_value) / btc_value
-  
+
   # Extraction for "thermocap_multiple"
   thermo_price = report_data.loc[report_date, 'thermocap_multiple_8']
   thermo_difficulty_change = difficulty_period_changes.loc[
@@ -839,7 +839,10 @@ def create_bitcoin_valuation_table(report_data, difficulty_period_changes,
 
   # Create and return the "Bitcoin Valuation" DataFrame
   bitcoin_valuation_df = pd.DataFrame(bitcoin_valuation_data)
-
+  # Convert columns from 'object' to 'float64'
+  bitcoin_valuation_df['Difficulty Period Change'] = pd.to_numeric(bitcoin_valuation_df['Difficulty Period Change'], errors='coerce')
+  bitcoin_valuation_df['Sell Target'] = pd.to_numeric(bitcoin_valuation_df['Sell Target'], errors='coerce')
+  bitcoin_valuation_df['% To Sell Target'] = pd.to_numeric(bitcoin_valuation_df['% To Sell Target'], errors='coerce')
   return bitcoin_valuation_df
 
 
@@ -847,14 +850,118 @@ def create_bitcoin_valuation_table(report_data, difficulty_period_changes,
 def style_bitcoin_valuation_table(bitcoin_valuation_table):
   format_dict_valuation = {
       'Valuation Model': '{}',
-      'Model Price': '${:,.0f}',
-      'Difficulty Period Change': '{:.2f}%',
-      'BTC Price': '${:,.0f}',
-      'Buy Target': '${:,.0f}',
-      'Sell Target': '${:,.0f}',
+      'Model Price': lambda x: '${:,.0f}'.format(x) if pd.notnull(x) else x,  # Ensure numeric
+      'Difficulty Period Change': '{:.2f}%',  # This expects numeric values
+      'BTC Price': lambda x: '${:,.0f}'.format(x) if pd.notnull(x) else x,
+      'Buy Target': lambda x: '${:,.0f}'.format(x) if pd.notnull(x) else x,
+      'Sell Target': lambda x: '${:,.0f}'.format(x) if pd.notnull(x) else x,
       '% To Buy Target': '{:.2%}',
       '% To Model Price': '{:.2%}',
       '% To Sell Target': '{:.2%}'
+  }
+
+  # Define a custom colormap that diverges from red to green
+  diverging_cm = sns.diverging_palette(100, 133, as_cmap=True)
+  diverging_cm = sns.diverging_palette(0, 0, s=0, l=85, as_cmap=True)
+  bg_colormap = sns.light_palette("white", as_cmap=True)
+
+  def color_values(val):
+    """
+    Takes a scalar and returns a string with
+    the CSS property 'color: green' for positive
+    values, 'color: red' for negative values, and 'color: black' otherwise.
+    """
+    # Ensure val is not a Series but a scalar value.
+    # The comparison operations below are scalar operations and will raise an error
+    # if 'val' is a Series.
+    try:
+        if val > 0:
+            color = 'green'
+        elif val < 0:
+            color = 'red'
+        else:
+            color = 'black'
+    except ValueError:
+        # This block should not be reached when using applymap, as applymap works element-wise.
+        # Including this to provide a complete example and handle unexpected cases.
+        color = 'black'  # Default color if comparison fails
+    return f'color: {color}'
+
+  # Columns to apply the background gradient on
+  gradient_columns = [
+      'Difficulty Period Change', '% To Model Price', '% To Sell Target', '% To Buy Target'
+  ]
+
+  # Apply the formatting and the background gradient only to the specified columns
+  styled_table_colors = (
+      bitcoin_valuation_table.style.format(format_dict_valuation).applymap(
+          color_values, subset=gradient_columns).hide_index().set_properties(**{'white-space': 'nowrap'})  # Prevent content wrapping
+                    .set_table_styles([
+                         {'selector': 'th', 'props': [('white-space', 'nowrap')]}
+                     ]))
+
+  return styled_table_colors
+
+
+
+
+# Create Model Table
+def create_bitcoin_model_table(report_data, report_date, cagr_results):
+
+  # Extract BTC Value
+  btc_value = report_data.loc[report_date, 'PriceUSD']
+
+  # Extraction for Values"
+  four_year_cagr = cagr_results.loc[report_date, 'PriceUSD_4_Year_CAGR'],
+  sf_multiple = report_data.loc[report_date, 'SF_Multiple']
+  day_200_price_multiple = report_data.loc[report_date, '200_day_multiple']
+  realized_price_multiple = report_data.loc[report_date, 'mvrv_ratio']
+  thermocap_multiple = report_data.loc[report_date, 'thermocap_multiple']
+  production_price_multiple = report_data.loc[report_date, 'Energy_Value_Multiple']
+
+  # Extraction for "appl_marketcap"
+  silver_price = report_data.loc[report_date,'silver_marketcap_billion_usd'] / report_data.loc[report_date, 'SplyExpFut10yr']
+  gold_price_country = report_data.loc[report_date,'gold_official_country_holdings_marketcap_btc_price'] / report_data.loc[ report_date, 'SplyExpFut10yr']
+  gold_price_private = report_data.loc[report_date,'gold_private_investment_marketcap_btc_price'] / report_data.loc[ report_date, 'SplyExpFut10yr']
+  gold_price = report_data.loc[report_date,'gold_marketcap_billion_usd'] / report_data.loc[ report_date, 'SplyExpFut10yr']
+  META_price = report_data.loc[report_date, 'META_mc_btc_price']
+  AMZN_price = report_data.loc[report_date, 'AMZN_mc_btc_price']
+  GOOGL_price = report_data.loc[report_date, 'GOOGL_mc_btc_price']
+  MSFT_price = report_data.loc[report_date, 'MSFT_mc_btc_price']
+  AAPL_price = report_data.loc[report_date, 'MSFT_mc_btc_price']
+  uk_price = report_data.loc[report_date, 'United_Kingdom_btc_price']
+  japan_price = report_data.loc[report_date, 'Japan_btc_price']
+  china_price = report_data.loc[report_date, 'China_btc_price']
+  us_price = report_data.loc[report_date, 'United_States_btc_price']
+  eu_price = report_data.loc[report_date, 'Eurozone_btc_price']
+  
+  # Update the dictionary with the extracted values
+  bitcoin_model_data = {
+      "Model": [
+          '4 Year CAGR', 'Stock-Flow Multiple', '200 Day Price Multiple',
+          'Realized Price Multiple', 'Thermocap Multiple', 'Production Price Multiple',
+          'Silver Price Level', 'Gold Country Price Level', 'Gold Private Ownership Price Level', 'Total Gold Price Level',
+          'META Price Level', 'Amazon Price Level', 'Google Price Level', 'Microsoft Price Level', 'Apple Price Level', 'UK Price Level',
+          'Japan Price Level', 'China Price Level', 'US Price Level', 'EU Price Level'
+      ],
+      "Model Multiple / Value": [
+        four_year_cagr, sf_multiple, day_200_price_multiple, realized_price_multiple,
+        thermocap_multiple, production_price_multiple, silver_price, gold_price_country, gold_price_private, gold_price,
+        META_price, AMZN_price, GOOGL_price, MSFT_price, AAPL_price, uk_price, japan_price, china_price, us_price, eu_price
+      ],
+  }
+
+  # Create and return the "Bitcoin Valuation" DataFrame
+  bitcoin_model_df = pd.DataFrame(bitcoin_model_data)
+
+  return bitcoin_model_df
+
+
+# Style Table
+def style_bitcoin_model_table(bitcoin_model_table):
+  format_dict_valuation = {
+      'Valuation Model': '{}',
+      'Model Multiple / Value': '{:,.0f}',
   }
 
   # Define a custom colormap that diverges from red to green
@@ -871,17 +978,14 @@ def style_bitcoin_valuation_table(bitcoin_valuation_table):
     color = 'green' if val > 0 else ('red' if val < 0 else 'black')
     return 'color: %s' % color
 
-  # Columns to apply the background gradient on
-  gradient_columns = [
-      'Difficulty Period Change', '% To Model Price', '% To Sell Target', '% To Buy Target'
-  ]
+  # Apply the formatting and hide index only, without color styling
+  styled_table = (
+      bitcoin_model_table.style.format(format_dict_valuation)
+      .hide_index()
+      .set_properties(**{'white-space': 'nowrap'})  # Prevent content wrapping
+      .set_table_styles([
+          {'selector': 'th', 'props': [('white-space', 'nowrap')]}
+      ])
+  )
 
-  # Apply the formatting and the background gradient only to the specified columns
-  styled_table_colors = (
-      bitcoin_valuation_table.style.format(format_dict_valuation).applymap(
-          color_values, subset=gradient_columns).hide_index().set_properties(**{'white-space': 'nowrap'})  # Prevent content wrapping
-                    .set_table_styles([
-                         {'selector': 'th', 'props': [('white-space', 'nowrap')]}
-                     ]))
-
-  return styled_table_colors
+  return styled_table

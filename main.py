@@ -34,11 +34,15 @@ data = data_format.calculate_moving_averages(data, moving_avg_metrics)
 data = data_format.calculate_btc_price_to_surpass_fiat(data, fiat_money_data_top10)
 data = data_format.calculate_metal_market_caps(data, gold_silver_supply)
 data = data_format.calculate_gold_market_cap_breakdown(data, gold_supply_breakdown)
+data = data_format.calculate_btc_price_to_surpass_metal_categories(data, gold_supply_breakdown)
 data = data_format.calculate_btc_price_for_stock_mkt_caps(data, stock_tickers)
 data = data_format.calculate_stock_to_flow_metrics(data)
+data = data_format.electric_price_models(data)
 
 # Forward fill the data for all columns
 data.ffill(inplace=True)
+today_date = pd.Timestamp(datetime.date.today())
+data = data.loc[:today_date]
 
 # Flatten the list of columns from the dictionary
 columns_to_keep = [item for sublist in filter_data_columns.values() for item in sublist]
@@ -117,6 +121,12 @@ styled_valuation_table = report_tables.style_bitcoin_valuation_table(valuation_t
 # Create a DataPane table with the styled table
 valuation_table_dp = dp.Table(styled_valuation_table, name='Valuation_Table')
 
+# Create the model table
+model_table = report_tables.create_bitcoin_model_table(report_data,report_date,cagr_results)
+
+# Create the styled model table
+styled_model_table = report_tables.style_bitcoin_model_table(model_table)
+
 # Datapane Report Imports
 from datapane_report import generate_report_layout
 
@@ -141,3 +151,4 @@ difficulty_update_table.to_csv('difficulty_table.csv', index=False)
 styled_performance_table.data.to_csv('performance_table.csv', index=False)
 styled_fundamentals_table.data.to_csv('fundamentals_table.csv', index=False)
 styled_valuation_table.data.to_csv('valuation_table.csv', index=False)
+styled_model_table.data.to_csv('model_table.csv', index=False)
