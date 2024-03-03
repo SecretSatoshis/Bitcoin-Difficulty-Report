@@ -29,25 +29,25 @@ def get_fear_and_greed_index():
   return df
 
 def get_price(tickers, start_date):
-    data = pd.DataFrame()
-    for category, ticker_list in tickers.items():
-        for ticker in ticker_list:
-            try:
-                stock = si.get_data(ticker, start_date=start_date)
-                stock = stock[['close']]  # Keep only the 'close' column
-                stock.columns = [ticker + '_close']  # Rename the column
-                stock = stock.resample('D').ffill()  # Resample to fill missing days
-                if data.empty:
-                    data = stock
-                else:
-                    data = data.join(stock)
-            except Exception as e:
-                print(f"Could not fetch data for {ticker} in category {category}. Reason: {str(e)}")
-    data.reset_index(inplace=True)
-    data.rename(columns={'index': 'time'}, inplace=True)  # rename 'date' to 'time'
-    data['time'] = pd.to_datetime(data['time'])  # convert to datetime type
-    print("Yahoo Finance Price Data Call Completed")
-    return data
+  data = pd.DataFrame()
+  for category, ticker_list in tickers.items():
+      for ticker in ticker_list:
+          try:
+              stock = si.get_data(ticker, start_date=start_date)
+              stock = stock[['close']]  # Keep only the 'close' column
+              stock.columns = [ticker + '_close']  # Rename the column
+              stock = stock.resample('D').ffill()  # Resample to fill missing days
+              if data.empty:
+                  data = stock
+              else:
+                  data = data.join(stock)
+          except Exception as e:
+              print(f"Could not fetch data for {ticker} in category {category}. Reason: {str(e)}")
+  data.reset_index(inplace=True)
+  data.rename(columns={'index': 'time'}, inplace=True)  # rename 'date' to 'time'
+  data['time'] = pd.to_datetime(data['time'])  # convert to datetime type
+  print("Yahoo Finance Price Data Call Completed")
+  return data
 
 def get_marketcap(tickers, start_date):
   date_range = pd.date_range(start=start_date, end=pd.to_datetime('today'))
@@ -83,6 +83,7 @@ def get_marketcap(tickers, start_date):
       print(f"Quote table for {ticker}: {quote_table}")
       data[f'{ticker}_MarketCap'] = [None] * len(date_range)
   print("Yahoo Finance Marketcap Data Call Completed")
+  
   return data
   
 def get_miner_data(google_sheet_url):
@@ -162,47 +163,59 @@ def calculate_metal_market_caps(data, gold_silver_supply):
     return data
 
 def calculate_gold_market_cap_breakdown(data, gold_supply_breakdown):
-    gold_marketcap_billion_usd = data['gold_marketcap_billion_usd'].iloc[-1]  # get the latest value
-    for i, row in gold_supply_breakdown.iterrows():
-        category = row['Gold Supply Breakdown']
-        percentage_of_market = row['Percentage Of Market']
-
-        # Compute the market cap for this category
-        category_marketcap_billion_usd = gold_marketcap_billion_usd * (percentage_of_market / 100.0)
-
-        # Add a new metric to the data
-        metric_name = 'gold_marketcap_' + category.replace(' ', '_').lower() + '_billion_usd'
-        data[metric_name] = category_marketcap_billion_usd  
-    return data
-  
-def calculate_btc_price_to_surpass_metal_categories(data, gold_supply_breakdown):
-  new_columns = {}
-
-  # Calculate the number of rows in the DataFrame for creating Series
-  num_rows = len(data)
-
-  # Gold calculations
+  # Use the latest value of gold market cap
   gold_marketcap_billion_usd = data['gold_marketcap_billion_usd'].iloc[-1]
-  new_columns['gold_marketcap_btc_price'] = pd.Series([gold_marketcap_billion_usd / data['SplyCur'].iloc[-2]] * num_rows)
 
-  # Gold subcategories
   for i, row in gold_supply_breakdown.iterrows():
       category = row['Gold Supply Breakdown']
       percentage_of_market = row['Percentage Of Market']
       category_marketcap_billion_usd = gold_marketcap_billion_usd * (percentage_of_market / 100.0)
 
-      # Create metric name
-      metric_name = 'gold_' + category.replace(' ', '_').lower() + '_marketcap_btc_price'
-      new_columns[metric_name] = pd.Series([category_marketcap_billion_usd / data['SplyCur'].iloc[-2]] * num_rows)
+      # Create the metric name
+      metric_name = 'gold_marketcap_' + category.replace(' ', '_').lower() + '_billion_usd'
+
+      # Assign the calculated value to all rows in the new column
+      data[metric_name] = category_marketcap_billion_usd
+
+  # Explicitly check if the index is a DatetimeIndex; fix if needed
+  if not isinstance(data.index, pd.DatetimeIndex):
+      try:
+          data.index = pd.to_datetime(data.index)
+      except ValueError as e:
+          print(f"Failed to convert index back to DatetimeIndex: {e}")
+
+  return data
+
+def calculate_btc_price_to_surpass_metal_categories(data, gold_supply_breakdown):
+  # Ensure 'SplyExpFut10yr' is forward filled to avoid NaN values
+  data['SplyExpFut10yr'].ffill(inplace=True)
+
+  # Early return if 'SplyExpFut10yr' for the latest row is zero or NaN to avoid division by zero
+  if data['SplyExpFut10yr'].iloc[-1] == 0 or pd.isna(data['SplyExpFut10yr'].iloc[-1]):
+      print("Warning: 'SplyExpFut10yr' is zero or NaN for the latest row. Skipping calculations.")
+      return data
+
+  new_columns = {}  # Use a dictionary to store new columns
+
+  # Calculating BTC prices required to match or surpass market caps
+  gold_marketcap_billion_usd = data['gold_marketcap_billion_usd'].iloc[-1]
+  new_columns['gold_marketcap_btc_price'] = gold_marketcap_billion_usd / data['SplyExpFut10yr']
+
+  # Iterating through gold supply breakdown to calculate specific categories
+  for i, row in gold_supply_breakdown.iterrows():
+      category = row['Gold Supply Breakdown'].replace(' ', '_').lower()
+      percentage_of_market = row['Percentage Of Market'] / 100.0
+      new_columns[f'gold_{category}_marketcap_btc_price'] = (gold_marketcap_billion_usd * percentage_of_market) / data['SplyExpFut10yr']
 
   # Silver calculations
   silver_marketcap_billion_usd = data['silver_marketcap_billion_usd'].iloc[-1]
-  new_columns['silver_marketcap_btc_price'] = pd.Series([silver_marketcap_billion_usd / data['SplyCur'].iloc[-2]] * num_rows)
+  new_columns['silver_marketcap_btc_price'] = silver_marketcap_billion_usd / data['SplyExpFut10yr']
 
-  # Use pd.concat to add the new columns to the DataFrame
-  data = pd.concat([data, pd.DataFrame(new_columns)], axis=1)
+  # Convert the dictionary to a DataFrame and concatenate it with the original DataFrame
+  new_columns_df = pd.DataFrame(new_columns, index=data.index)
+  data = pd.concat([data, new_columns_df], axis=1)
+
   return data
-
 
 def calculate_btc_price_to_surpass_fiat(data, fiat_money_data):
     for i, row in fiat_money_data.iterrows():
@@ -224,6 +237,9 @@ def calculate_btc_price_for_stock_mkt_caps(data, stock_tickers):
     for ticker in stock_tickers:
         new_columns[ticker + '_mc_btc_price'] = data[ticker + '_MarketCap'] / data['SplyCur']
     data = pd.concat([data, pd.DataFrame(new_columns)], axis=1)
+    data.ffill(inplace=True)
+    print(data['AAPL_mc_btc_price'])
+    print(data['MSFT_mc_btc_price'])
     return data
 
 
