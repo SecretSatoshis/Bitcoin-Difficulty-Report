@@ -68,7 +68,7 @@ weekly_high_low = data_format.calculate_52_week_high_low(report_data, report_dat
 # Calcualte Valuation Target Data
 valuation_data = data_format.create_valuation_data(report_data, valuation_metrics, report_date)
 
-# Calcualte Grwoth Rate Data
+# Calcualte Growth Rate Data
 cagr_results = data_format.calculate_rolling_cagr_for_all_metrics(data)
 
 # Calcuate Sharpe Ratio Data
@@ -84,6 +84,12 @@ correlation_results = data_format.create_btc_correlation_tables(report_date, tic
 
 # Import Report Table Functions
 import report_tables
+
+# Create the model table
+model_table = report_tables.create_bitcoin_model_table(report_data,report_date,cagr_results)
+
+# Create the styled model table
+styled_model_table = report_tables.style_bitcoin_model_table(model_table)
 
 # Create the difficulty update table
 difficulty_update_table = report_tables.create_difficulty_update_table(report_data, difficulty_report, report_date, difficulty_period_changes)
@@ -120,12 +126,6 @@ styled_valuation_table = report_tables.style_bitcoin_valuation_table(valuation_t
 
 # Create a DataPane table with the styled table
 valuation_table_dp = dp.Table(styled_valuation_table, name='Valuation_Table')
-
-# Create the model table
-model_table = report_tables.create_bitcoin_model_table(report_data,report_date,cagr_results)
-
-# Create the styled model table
-styled_model_table = report_tables.style_bitcoin_model_table(model_table)
 
 # Datapane Report Imports
 from datapane_report import generate_report_layout
