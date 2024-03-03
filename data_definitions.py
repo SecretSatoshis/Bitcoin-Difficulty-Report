@@ -99,7 +99,7 @@ filter_data_columns = {
         'silver_marketcap_billion_usd', 'gold_marketcap_billion_usd',
         'United_Kingdom_btc_price','United_Kingdom_cap','United_States_btc_price','United_States_cap',
         'Global_Fiat_Supply_btc_price', 'SF_Predicted_Price', 'SF_Multiple', 
-        'META_mc_btc_price', 'AMZN_mc_btc_price', 'GOOGL_mc_btc_price', 'MSFT_mc_btc_price', 'AAPL_mc_btc_price',
+        'META_mc_btc_price', 'AMZN_mc_btc_price', 'GOOGL_mc_btc_price', 'MSFT_mc_btc_price',
         'Japan_btc_price','China_btc_price','Eurozone_btc_price', 'gold_official_country_holdings_marketcap_btc_price',
         'gold_private_investment_marketcap_btc_price', 'Energy_Value_Multiple'
     ]
