@@ -921,14 +921,20 @@ def create_bitcoin_model_table(report_data, report_date, cagr_results):
 
   # Extraction for "appl_marketcap"
   silver_price = report_data.loc[report_date,'silver_marketcap_billion_usd'] / report_data.loc[report_date, 'SplyExpFut10yr']
-  gold_price_country = report_data.loc[report_date,'gold_official_country_holdings_marketcap_btc_price'] / report_data.loc[ report_date, 'SplyExpFut10yr']
-  gold_price_private = report_data.loc[report_date,'gold_private_investment_marketcap_btc_price'] / report_data.loc[ report_date, 'SplyExpFut10yr']
+  gold_price_country = report_data.loc[report_date,'gold_official_country_holdings_marketcap_btc_price']
+  gold_price_private = report_data.loc[report_date,'gold_private_investment_marketcap_btc_price'] 
   gold_price = report_data.loc[report_date,'gold_marketcap_billion_usd'] / report_data.loc[ report_date, 'SplyExpFut10yr']
   META_price = report_data.loc[report_date, 'META_mc_btc_price']
   AMZN_price = report_data.loc[report_date, 'AMZN_mc_btc_price']
   GOOGL_price = report_data.loc[report_date, 'GOOGL_mc_btc_price']
   MSFT_price = report_data.loc[report_date, 'MSFT_mc_btc_price']
+<<<<<<< HEAD
+  print(MSFT_price)
   AAPL_price = report_data.loc[report_date, 'AAPL_mc_btc_price']
+  print(AAPL_price)
+=======
+  AAPL_price = report_data.loc[report_date, 'AAPL_mc_btc_price']
+>>>>>>> 7d378535b1fc542776789ebb46b526a89908b226
   uk_price = report_data.loc[report_date, 'United_Kingdom_btc_price']
   japan_price = report_data.loc[report_date, 'Japan_btc_price']
   china_price = report_data.loc[report_date, 'China_btc_price']
@@ -938,14 +944,14 @@ def create_bitcoin_model_table(report_data, report_date, cagr_results):
   # Update the dictionary with the extracted values
   bitcoin_model_data = {
       "Model": [
-          '4 Year CAGR', 'Stock-Flow Multiple', '200 Day Price Multiple',
+          'Bitcoin Price','4 Year CAGR', 'Stock-Flow Multiple', '200 Day Price Multiple',
           'Realized Price Multiple', 'Thermocap Multiple', 'Production Price Multiple',
           'Silver Price Level', 'Gold Country Price Level', 'Gold Private Ownership Price Level', 'Total Gold Price Level',
           'META Price Level', 'Amazon Price Level', 'Google Price Level', 'Microsoft Price Level', 'Apple Price Level', 'UK Price Level',
           'Japan Price Level', 'China Price Level', 'US Price Level', 'EU Price Level'
       ],
       "Model Multiple / Value": [
-        four_year_cagr, sf_multiple, day_200_price_multiple, realized_price_multiple,
+        btc_value, four_year_cagr, sf_multiple, day_200_price_multiple, realized_price_multiple,
         thermocap_multiple, production_price_multiple, silver_price, gold_price_country, gold_price_private, gold_price,
         META_price, AMZN_price, GOOGL_price, MSFT_price, AAPL_price, uk_price, japan_price, china_price, us_price, eu_price
       ],
