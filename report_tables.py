@@ -928,13 +928,7 @@ def create_bitcoin_model_table(report_data, report_date, cagr_results):
   AMZN_price = report_data.loc[report_date, 'AMZN_mc_btc_price']
   GOOGL_price = report_data.loc[report_date, 'GOOGL_mc_btc_price']
   MSFT_price = report_data.loc[report_date, 'MSFT_mc_btc_price']
-<<<<<<< HEAD
-  print(MSFT_price)
   AAPL_price = report_data.loc[report_date, 'AAPL_mc_btc_price']
-  print(AAPL_price)
-=======
-  AAPL_price = report_data.loc[report_date, 'AAPL_mc_btc_price']
->>>>>>> 7d378535b1fc542776789ebb46b526a89908b226
   uk_price = report_data.loc[report_date, 'United_Kingdom_btc_price']
   japan_price = report_data.loc[report_date, 'Japan_btc_price']
   china_price = report_data.loc[report_date, 'China_btc_price']
