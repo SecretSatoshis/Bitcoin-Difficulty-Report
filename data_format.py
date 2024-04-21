@@ -458,7 +458,7 @@ def calculate_ytd_change(data):
   # Calculate the YTD change only if the start of the year is in the index
   for date in data.index:
     if start_of_year[date] in data.index:
-      ytd_change.loc[date, numeric_cols] = (data.loc[date, numeric_cols] / data.loc[start_of_year[date], numeric_cols] - 1) * 100  # Multiplying by 100 here
+      ytd_change.loc[date, numeric_cols] = (data.loc[date, numeric_cols] / data.loc[start_of_year[date], numeric_cols] - 1)
     else:
       ytd_change.loc[date, numeric_cols] = np.nan
 
